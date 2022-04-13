@@ -1,0 +1,85 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(7,6,5,4,3,2);
+
+const int buzzer = A0;
+int cm = 0;
+int inches = 0;
+
+void setup()
+{
+  lcd.begin(16,2);
+  lcd.setCursor(2,0);                   	
+  lcd.setCursor(0, 1);
+  pinMode(buzzer, OUTPUT);
+  pinMode(8, INPUT);
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(13, OUTPUT);
+  delay(1000); 
+}
+
+void loop()
+{
+  lcd.clear();
+  cm = 0.01723 * distanceUltrassom(8);
+  lcd.setCursor(0, 0);                   	
+  lcd.print("Distance "); 
+  lcd.setCursor(0, 1);
+  lcd.print("Centimeter: ");
+  lcd.print(cm);
+  
+  //if's que acendem os leds
+  if (cm < 280){
+      digitalWrite(13,HIGH);
+      tone(buzzer, 100, 100);
+      delay(800);
+    }
+  if (cm < 200){
+      digitalWrite(12,HIGH);
+      tone(buzzer, 80, 80);
+      delay(600);
+    }
+  if (cm < 100){
+      digitalWrite(11,HIGH);
+      tone(buzzer, 60, 60);
+      delay(400);
+    }
+  if (cm < 50){
+      digitalWrite(10,HIGH);
+   	  tone(buzzer, 50, 30);
+      delay(200);
+    }
+  
+  //if's que desligam os leds
+  if (cm > 50){
+      digitalWrite(10,LOW);
+    }
+  if (cm > 100){
+      digitalWrite(11,LOW);
+    }
+  if (cm > 200){
+      digitalWrite(12,LOW);
+    }
+  if (cm > 280){
+      tone(buzzer, 100, 100);
+      digitalWrite(13,LOW);
+      delay(3000);
+  }
+  
+}
+
+long distanceUltrassom(int pin)
+{
+  pinMode(pin, OUTPUT);
+  digitalWrite(pin, LOW);
+  delayMicroseconds(2);
+ 
+  digitalWrite(pin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(pin, LOW);
+  pinMode(pin, INPUT);
+  
+  return pulseIn(pin, HIGH);
+}
