@@ -1,0 +1,56 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(13,12,11,10,9,8);
+
+int redled = 2;
+int greenled = 3;
+int buzzer = A0;
+int sensor = A5;
+int sensorThresh = 400;
+
+void setup()
+{
+	pinMode(redled,OUTPUT);
+	pinMode(greenled,OUTPUT);
+	pinMode(buzzer,OUTPUT);
+	pinMode(sensor,INPUT);
+	Serial.begin(9600);
+	lcd.begin(16,2);
+}
+
+void loop()
+{
+	int analogValue= analogRead(sensor);
+	Serial.print(analogValue);
+  
+	if(analogValue>sensorThresh)
+	{
+  
+		digitalWrite(redled,HIGH);
+		digitalWrite(greenled,LOW);
+		tone(buzzer,1000,10000);
+		lcd.clear();
+		lcd.setCursor(0,1);
+		lcd.print("ALERT");
+		delay(1000);
+		lcd.clear();
+		lcd.setCursor(0,1);
+		lcd.print("EVACUATE THE AREA");
+		delay(1000);
+	}
+	else
+	{
+		digitalWrite(greenled,HIGH);
+		digitalWrite(redled,LOW);
+		noTone(buzzer);
+		lcd.clear();
+		lcd.setCursor(0,0);
+		lcd.print("SECURITY");
+		delay(1000);
+		lcd.clear();
+		lcd.setCursor(0,1);
+		lcd.print("NO GAS OR SMOOKE");
+		delay(1000);
+	}
+}
+  
